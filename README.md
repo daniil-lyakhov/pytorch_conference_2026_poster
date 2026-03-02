@@ -91,3 +91,9 @@ Copyright (c) Anish Athalye. Released under the MIT License. See [LICENSE.md][li
 [Lato]: https://www.fontsquirrel.com/fonts/lato
 [license]: LICENSE.md
 [FAQ]: https://github.com/anishathalye/gemini/wiki/FAQ
+
+
+## Dlyakhov: ubuntu installation guide
+```
+sudo apt-get update -qq && sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-luatex texlive-fonts-recommended texlive-fonts-extra texlive-pictures texlive-science 
+```
