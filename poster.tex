@@ -37,11 +37,11 @@
 % Title
 % ====================
 
-\title{Some fancy title: followed by some more text}
+\title{Model Compression API for a fast and precise inference in ExecuTorch}
 
-\author{Alyssa P. Hacker \inst{1} \and Ben Bitdiddle \inst{2} \and Lem E. Tweakit \inst{2}}
+\author{Daniil Lyakhov \inst{1} \and Aamir Nazir \inst{1}}
 
-\institute[shortinst]{\inst{1} Some Institute \samelineand \inst{2} Another Institute}
+\institute[shortinst]{\inst{1} Intel Corporation}
 
 % ====================
 % Footer (optional)
@@ -90,26 +90,27 @@
 
   \end{block}
 
-  \begin{block}{Methodology: torch.ao quantization pipeline}
+  \begin{block}{torch.ao pipeline vs NNCF API}
 
-    PyTorch~2 Export Quantization provides a modular, graph-based post-training quantization (PTQ) workflow built on top of \texttt{torch.export} and \texttt{torch.fx}. The pipeline decouples three concerns --- quantizer configuration, graph annotation, and model conversion --- making it straightforward to plug in different backends.
+    PyTorch~2 Export Quantization provides a modular PTQ workflow: \texttt{torch.export} $\rightarrow$ \texttt{prepare\_pt2e} $\rightarrow$ calibrate $\rightarrow$ \texttt{convert\_pt2e}. While effective, the standard flow applies only basic min/max observer statistics and offers no weight-compression path for LLMs.
+
+    NNCF's \texttt{quantize\_pt2e} and \texttt{compress\_pt2e} extend this pipeline with data-aware algorithms while preserving full compatibility with any \texttt{torch.ao} Quantizer.
 
     \begin{figure}
       \centering
       \includesvg[width=0.95\colwidth]{figures/quantization_flow}
-      \caption{torch.ao Post-Training Quantization flow.}
+      \caption{Standard torch.ao PTQ flow (left) vs.\ NNCF \texttt{quantize\_pt2e} / \texttt{compress\_pt2e} (right).}
     \end{figure}
 
-    \heading{Pipeline Steps}
+    \heading{Key Differences}
 
-    \begin{enumerate}
-      \item \textbf{Export} --- \texttt{torch.export.export\_for\_training()} captures the model as a full-graph \texttt{torch.fx.GraphModule}, preserving autograd semantics needed for calibration.
-      \item \textbf{Prepare} --- \texttt{prepare\_pt2e(model, quantizer)} inserts observer / fake-quantize nodes into the graph according to the backend-specific \texttt{Quantizer}.
-      \item \textbf{Calibrate} --- Run representative data through the prepared model so observers collect activation statistics (min/max, histograms, etc.).
-      \item \textbf{Convert} --- \texttt{convert\_pt2e(model)} replaces observers with actual quantize/dequantize operations, producing a quantized \texttt{GraphModule} ready for lowering.
-    \end{enumerate}
+    \begin{itemize}
+      \item \textbf{Standard torch.ao} --- Four manual steps (\texttt{export}, \texttt{prepare\_pt2e}, calibrate, \texttt{convert\_pt2e}). No data-aware accuracy improvement; no weight compression for LLMs.
+      \item \textbf{\texttt{quantize\_pt2e}} --- Wraps the same four steps internally and augments them with \emph{SmoothQuant} (pre-quantization activation smoothing) and \emph{BiasCorrection} (post-quantization bias adjustment). Works with any \texttt{torch.ao} Quantizer.
+      \item \textbf{\texttt{compress\_pt2e}} --- Applies weight compression (INT4/INT8) with \emph{AWQ}, \emph{GPTQ}, and \emph{Scale Estimation} to reduce LLM perplexity at minimal accuracy cost. Currently supports the \texttt{OpenVINOQuantizer}.
+    \end{itemize}
 
-    A \texttt{Quantizer} encapsulates all backend-specific decisions --- which operators to quantize, which dtypes and schemes to use, and how to fuse patterns. PyTorch ships several built-in quantizers (e.g.\ \texttt{XNNPACKQuantizer}, \texttt{X86InductorQuantizer}); NNCF contributes the \texttt{OpenVINOQuantizer} for the OpenVINO backend.
+    Both NNCF APIs share the same \texttt{torch.export} entry point and \texttt{Quantizer} abstraction as the standard flow, making them drop-in replacements.
 
   \end{block}
 
