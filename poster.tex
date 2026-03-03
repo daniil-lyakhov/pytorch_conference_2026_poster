@@ -92,23 +92,24 @@
 
   \begin{block}{Methodology: torch.ao quantization pipeline}
 
-    The \texttt{OpenVINOQuantizer} from NNCF enables PyTorch~2 Export Quantization tailored for the OpenVINO backend. It unlocks the full potential of low-precision OpenVINO kernels by placing quantizers designed specifically for OpenVINO.
+    PyTorch~2 Export Quantization provides a modular, graph-based post-training quantization (PTQ) workflow built on top of \texttt{torch.export} and \texttt{torch.fx}. The pipeline decouples three concerns --- quantizer configuration, graph annotation, and model conversion --- making it straightforward to plug in different backends.
 
     \begin{figure}
       \centering
       \includesvg[width=0.95\colwidth]{figures/quantization_flow}
-      \caption{torch.ao Post-Training Quantization flow with OpenVINOQuantizer.}
+      \caption{torch.ao Post-Training Quantization flow.}
     \end{figure}
 
-    \heading{OpenVINOQuantizer Configuration}
+    \heading{Pipeline Steps}
 
-    \texttt{OpenVINOQuantizer} exposes several parameters for fine-grained control:
+    \begin{enumerate}
+      \item \textbf{Export} --- \texttt{torch.export.export\_for\_training()} captures the model as a full-graph \texttt{torch.fx.GraphModule}, preserving autograd semantics needed for calibration.
+      \item \textbf{Prepare} --- \texttt{prepare\_pt2e(model, quantizer)} inserts observer / fake-quantize nodes into the graph according to the backend-specific \texttt{Quantizer}.
+      \item \textbf{Calibrate} --- Run representative data through the prepared model so observers collect activation statistics (min/max, histograms, etc.).
+      \item \textbf{Convert} --- \texttt{convert\_pt2e(model)} replaces observers with actual quantize/dequantize operations, producing a quantized \texttt{GraphModule} ready for lowering.
+    \end{enumerate}
 
-    \begin{itemize}
-      \item \textbf{\texttt{preset}} --- \texttt{PERFORMANCE} (default): symmetric quantization of weights and activations. \texttt{MIXED}: symmetric weights with asymmetric activations, recommended for non-ReLU models (ELU, PReLU, GELU).
-      \item \textbf{\texttt{model\_type}} --- Set to \texttt{Transformer} for Transformer-based architectures (BERT, Llama, etc.) to preserve accuracy with a specialized quantization scheme.
-      \item \textbf{\texttt{target\_device}} --- Optimize for a specific hardware target: \texttt{ANY} (default), \texttt{CPU}, \texttt{CPU\_SPR}, \texttt{GPU}, or \texttt{NPU}.
-    \end{itemize}
+    A \texttt{Quantizer} encapsulates all backend-specific decisions --- which operators to quantize, which dtypes and schemes to use, and how to fuse patterns. PyTorch ships several built-in quantizers (e.g.\ \texttt{XNNPACKQuantizer}, \texttt{X86InductorQuantizer}); NNCF contributes the \texttt{OpenVINOQuantizer} for the OpenVINO backend.
 
   \end{block}
 
@@ -116,6 +117,7 @@
 \end{column}
 
 \begin{column}{\colwidth}
+
 
   \begin{block}{Compression API: \texttt{compress\_pt2e} \& \texttt{quantize\_pt2e} }
 
@@ -149,6 +151,21 @@
 
   \end{block}
 
+  \begin{block}{OpenVINOQuantizer}
+
+    The \texttt{OpenVINOQuantizer} from NNCF is a \texttt{torch.ao} Quantizer tailored for the OpenVINO backend. It unlocks the full potential of low-precision OpenVINO kernels by placing quantizers designed specifically for OpenVINO operator implementations.
+
+    \heading{Configuration}
+
+    \texttt{OpenVINOQuantizer} exposes several parameters for fine-grained control:
+
+    \begin{itemize}
+      \item \textbf{\texttt{preset}} --- \texttt{PERFORMANCE} (default): symmetric quantization of weights and activations. \texttt{MIXED}: symmetric weights with asymmetric activations, recommended for non-ReLU models (ELU, PReLU, GELU).
+      \item \textbf{\texttt{model\_type}} --- Set to \texttt{Transformer} for Transformer-based architectures (BERT, Llama, etc.) to preserve accuracy with a specialized quantization scheme.
+      \item \textbf{\texttt{target\_device}} --- Optimize for a specific hardware target: \texttt{ANY} (default), \texttt{CPU}, \texttt{CPU\_SPR}, \texttt{GPU}, or \texttt{NPU}.
+    \end{itemize}
+
+  \end{block}
 \end{column}
 
 \separatorcolumn
