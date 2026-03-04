@@ -95,5 +95,5 @@ Copyright (c) Anish Athalye. Released under the MIT License. See [LICENSE.md][li
 
 ## Dlyakhov: ubuntu installation guide
 ```
-sudo apt-get update -qq && sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-luatex texlive-fonts-recommended texlive-fonts-extra texlive-pictures texlive-science 
+sudo apt-get update -qq && sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-luatex texlive-fonts-recommended texlive-fonts-extra texlive-pictures texlive-science texlive-extra-utils
 ```
