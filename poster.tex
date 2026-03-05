@@ -9,7 +9,7 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[size=custom,width=118.9,height=84.1,scale=1.0]{beamerposter}
+\usepackage[size=custom,width=84.1,height=59.4,scale=.7]{beamerposter}
 \usetheme{gemini}
 \usecolortheme{gemini}
 \usepackage{graphicx}
@@ -39,9 +39,9 @@
 
 \title{Model Compression API for a fast and precise inference in ExecuTorch}
 
-\author{Daniil Lyakhov \inst{1} \and Aamir Nazir \inst{1}}
+\author{Daniil Lyakhov \and Aamir Nazir \and \textit{@} Intel Corporation}
 
-\institute[shortinst]{\inst{1} Intel Corporation}
+%\institute[shortinst]{\inst{1} Intel Corporation}
 
 % ====================
 % Footer (optional)
@@ -109,12 +109,19 @@
 
         This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \texttt{torch.ao} quantization call with \texttt{quantize\_pt2e} and supply a calibration dataset.
 
+        \begin{figure}
+          \centering
+          \includegraphics[width=0.95\colwidth]{svg-inkscape/sq_scheme.png}
+          \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant.}
+        \end{figure}
 
       \end{block}
 
 
 
     \end{column}
+
+    \separatorcolumn
 
     \begin{column}{\colwidth}
 
@@ -177,6 +184,7 @@
           \caption{Llama~3.2 perplexity and model size under different compression modes.}
         \end{table}
 
+
         \heading{Detection: YOLOv12 INT8 Quantization}
 
         INT8 post-training quantization applied via \texttt{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{yolo_et}.
@@ -199,9 +207,6 @@
     \separatorcolumn
 
     \begin{column}{\colwidth}
-
-
-
       \heading{Image Generation: Stable Diffusion}
 
       Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{sd_et}.
