@@ -9,7 +9,7 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[size=custom,width=84.1,height=59.4,scale=.7]{beamerposter}
+\usepackage[size=custom,width=84.1,height=59.4,scale=.75]{beamerposter}
 \usetheme{gemini}
 \usecolortheme{gemini}
 \usepackage{graphicx}
@@ -52,6 +52,11 @@
 %  ABC Conference 2025, New York --- XYZ-1234 \hfill
 %  \href{mailto:alyssa.p.hacker@example.com}{alyssa.p.hacker@example.com}}
 % (can be left out to remove footer)
+
+\footercontent{
+  \href{https://github.com/openvinotoolkit/nncf}{https://github.com/openvinotoolkit/nncf} \hfill
+  PyTorch Conference Europe 2025, Paris \hfill
+  \href{daniil.lyakhov@intel.com}{daniil.lyakhov@intel.com}}
 
 % ====================
 % Logo (optional)
@@ -103,36 +108,17 @@
 
       \end{block}
 
-      \begin{block}{torch.ao pipeline vs NNCF API}
+      \begin{block}{NNCF Compression API}
 
         NNCF's \texttt{quantize\_pt2e} and \texttt{compress\_pt2e} extend the standart torch.ao quantization pipeline with data-aware algorithms while preserving compatibility with the \texttt{torch.ao} Quantizer.
 
         \begin{figure}
           \centering
-          \includesvg[width=0.95\colwidth]{figures/quantization_flow}
-          \caption{Standard torch.ao PTQ flow (left) vs.\ NNCF \texttt{quantize\_pt2e} / \texttt{compress\_pt2e} (right).}
+          \includesvg[width=0.85\colwidth]{figures/quantization_flow}
+          \caption{NNCF \texttt{quantize\_pt2e} / \texttt{compress\_pt2e}.}
         \end{figure}
-
       \end{block}
 
-      \begin{block}{Post-Training Quantization --- \texttt{quantize\_pt2e}}
-
-        Can be applied on top of \emph{any} \texttt{torch.ao} Quantizer to improve the accuracy of the quantized models. The API implements the standard \texttt{prepare\_pt2e}/\texttt{convert\_pt2e} flow and augments it with data-aware algorithms:
-
-        \begin{enumerate}
-          \item \textbf{SmoothQuant} --- Reduces activation quantization error by inserting smoothing scales before weighted layers~\cite{smoothquant}.
-          \item \textbf{BiasCorrection} --- Corrects bias shifts introduced by quantization~\cite{bias_correction}.
-        \end{enumerate}
-
-        This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \texttt{torch.ao} quantization call with \texttt{quantize\_pt2e} and supply a calibration dataset.
-
-        \begin{figure}
-          \centering
-          \includegraphics[width=0.95\colwidth]{svg-inkscape/sq_scheme.png}
-          \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant.}
-        \end{figure}
-
-      \end{block}
 
 
 
@@ -149,8 +135,20 @@
         Applies weight compression to a \texttt{torch.fx.GraphModule}, targeting LLM deployment. Key algorithms:
 
         \begin{itemize}
-          \item \textbf{AWQ}  --- Activation-aware Weight Quantization that finds optimal per-channel scales to minimize quantization error based on activation distributions~\cite{awq}.
           \item \textbf{Scale Estimation}  --- Estimates optimal quantization scales for 4-bit layers to further reduce perplexity of compressed LLMs.
+
+                \begin{figure}
+                  \centering
+                  \includesvg[width=0.85\colwidth]{figures/scale_estimation}
+                  \caption{Visual scheme of Scale Estimation algorithm.}
+                \end{figure}
+
+          \item \textbf{AWQ}  --- Activation-aware Weight Quantization that finds optimal per-channel scales to minimize quantization error based on activation distributions~\cite{awq}.
+                %      \begin{figure}
+                %        \centering
+                %        \includegraphics[width=0.95\colwidth]{figures/AWQ_scheme.png}
+                %        \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant.}
+                %      \end{figure}
           \item \textbf{GPTQ}  --- Applies the GPTQ algorithm for accurate layer-wise weight quantization using second-order information~\cite{gptq}.
           \item \textbf{LoRA Correction}  --- Applies Low-Rank Adaptation corrections to compensate for weight compression errors~\cite{lora}.
         \end{itemize}
@@ -158,26 +156,32 @@
         Currently, \texttt{compress\_pt2e} supports the \texttt{OpenVINOQuantizer} and the OpenVINO backend. Support for third-party quantizers can be added by implementing a lightweight NNCF quantizer adapter.
 
       \end{block}
+      \begin{block}{Post-Training Quantization --- \texttt{quantize\_pt2e}}
 
-      \begin{block}{OpenVINO specific quantizer - OpenVINOQuantizer}
+        Can be applied on top of \emph{any} \texttt{torch.ao} Quantizer to improve the accuracy of the quantized models. The API implements the standard \texttt{prepare\_pt2e}/\texttt{convert\_pt2e} flow and augments it with data-aware algorithms:
 
-        The \texttt{OpenVINOQuantizer} from NNCF is a \texttt{torch.ao} Quantizer tailored for the OpenVINO backend. It unlocks the full potential of low-precision OpenVINO kernels by placing quantizers designed specifically for OpenVINO operator implementations.
+        \begin{enumerate}
+          \item \textbf{SmoothQuant} --- Reduces activation quantization error by inserting smoothing scales before weighted layers~\cite{smoothquant}.
 
-        \heading{Configuration}
+                \begin{figure}
+                  \centering
+                  \includegraphics[width=0.95\colwidth]{svg-inkscape/sq_scheme.png}
+                  \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant.}
+                \end{figure}
+          \item \textbf{BiasCorrection} --- Corrects bias shifts introduced by quantization~\cite{bias_correction}.
+        \end{enumerate}
 
-        The quantizer is configured via a single \textbf{\texttt{mode}} parameter of type \texttt{QuantizationMode}:
 
-        \begin{itemize}
-          \item \textbf{\texttt{INT8\_SYM}} (default) --- INT8 symmetric quantization for both activations and weights.
-          \item \textbf{\texttt{INT8\_MIXED}} --- INT8 asymmetric quantization for activations, symmetric for weights.
-          \item \textbf{\texttt{INT8\_TRANSFORMER}} --- Optimized INT8 quantization for Transformer-based architectures (BERT, Llama, etc.).
-          \item \textbf{\texttt{INT4WO\_SYM / INT4WO\_ASYM}} --- INT4 symmetric/asymmetric weights-only compression.
-          \item \textbf{\texttt{INT8WO\_SYM / INT8WO\_ASYM}} --- INT8 symmetric/asymmetric weights-only compression.
-        \end{itemize}
 
-        Additionally, \texttt{set\_ignored\_scope} allows excluding specific layers from quantization by node names, regex patterns, operation types, or subgraphs --- useful for preserving accuracy-sensitive parts of a model.
+        This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \texttt{torch.ao} quantization call with \texttt{quantize\_pt2e} and supply a calibration dataset.
 
       \end{block}
+
+    \end{column}
+
+    \separatorcolumn
+
+    \begin{column}{\colwidth}
 
       \begin{block}{Results}
 
@@ -218,38 +222,28 @@
           \end{tabular}
           \caption{YOLOv12 detection accuracy: FP32 baseline vs.\ INT8 quantized.}
         \end{table}
+        \heading{Image Generation: Stable Diffusion}
+
+        Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{sd_et}.
+
+        \begin{figure}
+          \centering
+          \begin{tabular}{ccc}
+            % Row 1 (FP32)
+            \includegraphics[width=0.12\colwidth]{example-image} &
+            \includegraphics[width=0.12\colwidth]{example-image} &
+            \includegraphics[width=0.12\colwidth]{example-image}   \\
+            % Row 2 (INT8 / Compressed)
+            \includegraphics[width=0.12\colwidth]{example-image} &
+            \includegraphics[width=0.12\colwidth]{example-image} &
+            \includegraphics[width=0.12\colwidth]{example-image}   \\
+          \end{tabular}
+          % Replace 'example-image' with actual image paths, e.g.:
+          % figures/sd_prompt1_fp32.png, figures/sd_prompt1_int8.png, etc.
+          \caption{Stable Diffusion generation quality: FP32 (top) vs.\ INT8/compressed (bottom) for three prompts.}
+        \end{figure}
+
       \end{block}
-    \end{column}
-
-    \separatorcolumn
-
-    \begin{column}{\colwidth}
-      \heading{Image Generation: Stable Diffusion}
-
-      Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{sd_et}.
-
-      \begin{figure}
-        \centering
-        \begin{tabular}{ccc}
-          % Pair 1
-          \includegraphics[width=0.28\colwidth]{example-image} &
-          \includegraphics[width=0.28\colwidth]{example-image} &
-          \includegraphics[width=0.28\colwidth]{example-image}                                                           \\
-          % Pair 2
-          \includegraphics[width=0.28\colwidth]{example-image} &
-          \includegraphics[width=0.28\colwidth]{example-image} &
-          \includegraphics[width=0.28\colwidth]{example-image}                                                           \\
-          {\small FP32}                                        & {\small FP32}              & {\small FP32}              \\[2pt]
-          \includegraphics[width=0.28\colwidth]{example-image} &
-          \includegraphics[width=0.28\colwidth]{example-image} &
-          \includegraphics[width=0.28\colwidth]{example-image}                                                           \\
-          {\small INT8 / Compressed}                           & {\small INT8 / Compressed} & {\small INT8 / Compressed} \\
-        \end{tabular}
-        % Replace 'example-image' with actual image paths, e.g.:
-        % figures/sd_prompt1_fp32.png, figures/sd_prompt1_int8.png, etc.
-        \caption{Stable Diffusion generation quality: FP32 (top) vs.\ INT8/compressed (bottom) for three prompts.}
-      \end{figure}
-
 
       \begin{block}{References}
 
