@@ -47,10 +47,10 @@
 % Footer (optional)
 % ====================
 
-\footercontent{
-  \href{https://www.example.com}{https://www.example.com} \hfill
-  ABC Conference 2025, New York --- XYZ-1234 \hfill
-  \href{mailto:alyssa.p.hacker@example.com}{alyssa.p.hacker@example.com}}
+%\footercontent{
+%  \href{https://www.example.com}{https://www.example.com} \hfill
+%  ABC Conference 2025, New York --- XYZ-1234 \hfill
+%  \href{mailto:alyssa.p.hacker@example.com}{alyssa.p.hacker@example.com}}
 % (can be left out to remove footer)
 
 % ====================
@@ -60,6 +60,23 @@
 % use this to include logos on the left and/or right side of the header:
 % \logoright{\includegraphics[height=7cm]{logo1.pdf}}
 % \logoleft{\includegraphics[height=7cm]{logo2.pdf}}
+\logoleft{\includesvg[height=5.5cm]{template_media/image3}}
+\logoright{\includesvg[height=4cm]{figures/Intel_logo_white}}
+
+% ====================
+% Headline background image
+% ====================
+% Set the background image for the title/headline area.
+% Adjust \headlinebgyshift to control which vertical stripe of the image is shown.
+%   Positive = show higher part of image, Negative = show lower part.
+% Adjust \headlinebgscale to zoom in/out (1.0 = fit poster width).
+% Adjust \headlinebgopacity to control the white overlay opacity (0=no overlay, 1=fully white).
+
+\headlinebgimage{template_media/image1.png}
+\headlinebgyshift{20cm}        % <-- change this to slide the crop window up/down
+\headlinebgxshift{5cm}         % <-- change this to slide the crop window left/right
+\headlinebgscale{2.0}          % <-- change this to scale the image (e.g. 1.5 = 150%)
+\headlinebgopacity{0.}      % <-- change this to make background more/less visible
 
 % ====================
 % Body

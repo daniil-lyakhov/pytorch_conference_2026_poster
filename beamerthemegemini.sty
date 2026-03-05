@@ -10,6 +10,15 @@
 \RequirePackage{changepage}
 \RequirePackage{fontspec}
 \RequirePackage{calc}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{graphicx}
+
+% Headline height — measured automatically via the aux file (two-pass).
+% On the first compilation the default is used; after that the real value
+% is read back from the .aux file.
+\newlength{\headlineheight}
+\setlength{\headlineheight}{14cm}% fallback for the very first run
 
 % ====================
 % Fonts
@@ -115,50 +124,130 @@
   \setlength{\maxlogowidth}{\maxof{\logoleftwidth}{\logorightwidth}}
 }
 
+% Headline background image support
+% ---
+% To use a background image in the headline, define \headlinebgimage in your
+% poster .tex file BEFORE \begin{document}:
+%
+%   \headlinebgimage{template_media/image1.png}
+%
+% The image is cropped to a horizontal stripe. Adjust the vertical position
+% of the stripe by changing \headlinebgyshift (default 0cm). Positive values
+% shift the viewport upward (showing a higher part of the image), negative
+% values shift it downward.
+%
+%   \headlinebgyshift{5cm}   % show a stripe 5cm higher in the image
+%
+% Adjust the horizontal position with \headlinebgxshift (default 0cm).
+% Positive values shift the image to the right, negative to the left.
+%
+%   \headlinebgxshift{3cm}   % shift image 3cm to the right
+%
+% You can also control the opacity overlay that keeps text readable:
+%
+%   \headlinebgopacity{0.45}  % 0 = fully transparent overlay, 1 = fully opaque
+%
+% Control the scale of the background image (default 1.0 = fit to poster width):
+%
+%   \headlinebgscale{1.5}    % scale image to 1.5x poster width
+%
+\newcommand{\headlinebgimage}[1]{\def\@headlinebgimage{#1}}
+\newcommand{\headlinebgyshift}[1]{\def\@headlinebgyshift{#1}}
+\newcommand{\headlinebgxshift}[1]{\def\@headlinebgxshift{#1}}
+\newcommand{\headlinebgscale}[1]{\def\@headlinebgscale{#1}}
+\newcommand{\headlinebgopacity}[1]{\def\@headlinebgopacity{#1}}
+% defaults
+\def\@headlinebgyshift{0cm}
+\def\@headlinebgxshift{0cm}
+\def\@headlinebgscale{1}
+\def\@headlinebgopacity{0.45}
+
 % Headline
+% The headline is rendered twice when a background image is used:
+%   Pass A  – invisible (in a savebox) to measure the real height
+%   Pass B  – visible, with the background image drawn underneath via
+%             a clipped TikZ overlay that uses the measured height
+\newsavebox{\@headlinebox}
+
+% --- helper: the headline *content* (shared by both passes) ---
+\newcommand{\@headlinecontent}{%
+  \begin{columns}
+    \begin{column}{\maxlogowidth}
+      \vskip5ex
+      \ifdefined\insertlogoleft
+      \vspace*{\fill}
+      \hspace{10ex}
+      \raggedright
+      \insertlogoleft
+      \vspace*{\fill}
+      \else\fi
+    \end{column}
+    \begin{column}{\dimexpr\paperwidth-\maxlogowidth-\maxlogowidth}
+      \usebeamerfont{headline}
+      \vskip3ex
+      \centering
+      \ifx \inserttitle \empty \else
+      {\usebeamerfont{headline title}\usebeamercolor[fg]{headline title}\inserttitle\\[0.5ex]}
+      \fi
+      \ifx \beamer@shortauthor \empty \else
+      {\usebeamerfont{headline author}\usebeamercolor[fg]{headline author}\insertauthor\\[1ex]}
+      \fi
+      \ifx \insertinstitute \empty \else
+      {\usebeamerfont{headline institute}\usebeamercolor[fg]{headline institute}\insertinstitute\\[1ex]}
+      \fi
+    \end{column}
+    \begin{column}{\maxlogowidth}
+      \vskip5ex
+      \ifdefined\insertlogoright
+      \vspace*{\fill}
+      \raggedleft
+      \insertlogoright
+      \hspace{10ex}
+      \vspace*{\fill}
+      \else\fi
+    \end{column}
+  \end{columns}
+  \vspace{5ex}
+  \ifbeamercolorempty[bg]{headline rule}{}{
+    \begin{beamercolorbox}[wd=\paperwidth,colsep=0.5ex]{headline rule}\end{beamercolorbox}
+  }%
+}
+
 \setbeamertemplate{headline}
 {
+  % --- Measure the headline height via a savebox ---
+  \savebox{\@headlinebox}{%
+    \begin{minipage}{\paperwidth}%
+      \begin{beamercolorbox}{headline}%
+        \@headlinecontent
+      \end{beamercolorbox}%
+    \end{minipage}%
+  }%
+  \setlength{\headlineheight}{\ht\@headlinebox}%
+  \addtolength{\headlineheight}{\dp\@headlinebox}%
+  %
+  % --- Render the headline with its normal bg colour ---
   \begin{beamercolorbox}{headline}
-    \begin{columns}
-      \begin{column}{\maxlogowidth}
-        \vskip5ex
-        \ifdefined\insertlogoleft
-        \vspace*{\fill}
-        \hspace{10ex}
-        \raggedright
-        \insertlogoleft
-        \vspace*{\fill}
-        \else\fi
-      \end{column}
-      \begin{column}{\dimexpr\paperwidth-\maxlogowidth-\maxlogowidth}
-        \usebeamerfont{headline}
-        \vskip3ex
-        \centering
-        \ifx \inserttitle \empty \else
-        {\usebeamerfont{headline title}\usebeamercolor[fg]{headline title}\inserttitle\\[0.5ex]}
-        \fi
-        \ifx \beamer@shortauthor \empty \else
-        {\usebeamerfont{headline author}\usebeamercolor[fg]{headline author}\insertauthor\\[1ex]}
-        \fi
-        \ifx \insertinstitute \empty \else
-        {\usebeamerfont{headline institute}\usebeamercolor[fg]{headline institute}\insertinstitute\\[1ex]}
-        \fi
-      \end{column}
-      \begin{column}{\maxlogowidth}
-        \vskip5ex
-        \ifdefined\insertlogoright
-        \vspace*{\fill}
-        \raggedleft
-        \insertlogoright
-        \hspace{10ex}
-        \vspace*{\fill}
-        \else\fi
-      \end{column}
-    \end{columns}
-    \vspace{5ex}
-    \ifbeamercolorempty[bg]{headline rule}{}{
-      \begin{beamercolorbox}[wd=\paperwidth,colsep=0.5ex]{headline rule}\end{beamercolorbox}
-    }
+    %
+    % Background image overlay — drawn INSIDE the beamercolorbox so it
+    % sits on top of the blue bg, then the text is drawn on top of it.
+    \ifdefined\@headlinebgimage
+    \begin{tikzpicture}[remember picture,overlay]
+      \coordinate (HL-TL) at (current page.north west);
+      \coordinate (HL-BR) at ([yshift=-\headlineheight]current page.north east);
+      \begin{scope}
+        \clip (HL-TL) rectangle (HL-BR);
+        \node[anchor=center,inner sep=0pt,outer sep=0pt]
+          at ($(HL-TL)!0.5!(HL-BR)+(\@headlinebgxshift,\@headlinebgyshift)$){%
+            \includegraphics[width=\@headlinebgscale\paperwidth]{\@headlinebgimage}%
+          };
+        % Semi-transparent overlay for text readability
+        \fill[white,opacity=\@headlinebgopacity] (HL-TL) rectangle (HL-BR);
+      \end{scope}
+    \end{tikzpicture}%
+    \fi
+    %
+    \@headlinecontent
   \end{beamercolorbox}
 }
 
