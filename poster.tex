@@ -55,7 +55,7 @@
 
 \footercontent{
   \href{https://github.com/openvinotoolkit/nncf}{https://github.com/openvinotoolkit/nncf} \hfill
-  PyTorch Conference Europe 2025, Paris \hfill
+  PyTorch Conference Europe 2026, Paris \hfill
   \href{daniil.lyakhov@intel.com}{daniil.lyakhov@intel.com}}
 
 % ====================
@@ -101,7 +101,7 @@
         It extends the standard \texttt{torch.ao} quantization pipeline with data-aware algorithms --- \texttt{quantize\_pt2e} for post-training quantization and \texttt{compress\_pt2e} for weight compression.
         \par
 
-        We demonstrate that the model compression with the \textbf{NNCF API} yields significant speedups on Llama~3.2, YOLOv12, and Stable Diffusion while preserving target metrics --- for the \textbf{OpenVINO ExecuTorch backend}.
+        We demonstrate that the model compression with the \textbf{NNCF API} yields significant speedups on Llama~3.2, YOLO26, and Stable Diffusion while preserving target metrics --- for the \textbf{OpenVINO ExecuTorch backend}.
         \par
 
         The NNCF compression API operates on the quantization annotations provided by a given \texttt{torch.ao} Quantizer --- rather than on backend-specific internals --- so any vendor backend can leverage its data-aware algorithms without altering the compressed model architecture.
@@ -114,7 +114,7 @@
 
         \begin{figure}
           \centering
-          \includesvg[width=0.85\colwidth]{figures/quantization_flow}
+          \includesvg[width=0.9\colwidth]{figures/quantization_flow}
           \caption{NNCF \texttt{quantize\_pt2e} / \texttt{compress\_pt2e}.}
         \end{figure}
       \end{block}
@@ -135,15 +135,15 @@
         Applies weight compression to a \texttt{torch.fx.GraphModule}, targeting LLM deployment. Key algorithms:
 
         \begin{itemize}
-          \item \textbf{Scale Estimation}  --- Estimates optimal quantization scales for 4-bit layers to further reduce perplexity of compressed LLMs.
+          \item \textbf{Scale Estimation}  --- Estimates scale to minimize the layer-wise output error for INT4 weight layers, iteratively refining the scales on a calibration subset.
 
                 \begin{figure}
                   \centering
-                  \includesvg[width=0.85\colwidth]{figures/scale_estimation}
-                  \caption{Visual scheme of Scale Estimation algorithm.}
+                  \includesvg[width=1.\colwidth]{figures/scale_estimation}
+                  \caption{Scale Estimation finds per-group scale factors that minimize the error of compressed layer outputs by grid searching a list of scale mutations normalazed by the layer inputs.}
                 \end{figure}
 
-          \item \textbf{AWQ}  --- Activation-aware Weight Quantization that finds optimal per-channel scales to minimize quantization error based on activation distributions~\cite{awq}.
+          \item \textbf{AWQ}  --- Activation-aware Weight Quantization that finds per-channel scales to minimize quantization error based on activation distributions~\cite{awq}.
                 %      \begin{figure}
                 %        \centering
                 %        \includegraphics[width=0.95\colwidth]{figures/AWQ_scheme.png}
@@ -206,7 +206,7 @@
         \end{table}
 
 
-        \heading{Detection: YOLOv12 INT8 Quantization}
+        \heading{Detection: YOLOv12 INT8 Post Training Quantization}
 
         INT8 post-training quantization applied via \texttt{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{yolo_et}.
 
