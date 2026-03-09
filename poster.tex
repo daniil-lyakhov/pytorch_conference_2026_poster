@@ -166,7 +166,7 @@
                 \begin{figure}
                   \centering
                   \includegraphics[width=0.95\colwidth]{svg-inkscape/sq_scheme.png}
-                  \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant.}
+                  \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant. Figure source\cite{smoothquant}.}
                 \end{figure}
           \item \textbf{BiasCorrection} --- Corrects bias shifts introduced by quantization~\cite{bias_correction}.
         \end{enumerate}
@@ -208,7 +208,7 @@
 
         \heading{Detection: YOLOv12 INT8 Post Training Quantization}
 
-        INT8 post-training quantization applied via \texttt{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{yolo_et}.
+        INT8 post-training quantization applied via \texttt{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{examples_et}.
 
         \begin{table}
           \centering
@@ -224,7 +224,7 @@
         \end{table}
         \heading{Image Generation: Stable Diffusion}
 
-        Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{sd_et}.
+        Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{examples_et}.
 
         \begin{figure}
           \centering
