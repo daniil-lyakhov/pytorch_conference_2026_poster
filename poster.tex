@@ -207,7 +207,7 @@
         \end{table}
 
 
-        \heading{Detection: YOLOv12 INT8 Post Training Quantization}
+        \heading{Detection: YOLO26 INT8 Post Training Quantization}
 
         INT8 post-training quantization applied via \textbf{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{examples_et}.
 
@@ -217,15 +217,15 @@
             \toprule
             \textbf{Model / Mode} & \textbf{mAP@50 $\uparrow$} & \textbf{mAP@50:95 $\uparrow$} & \textbf{Model Size} \\
             \midrule
-            YOLOv12 (FP32)        & ---                        & ---                           & ---                 \\
-            YOLOv12 (INT8)        & ---                        & ---                           & ---                 \\
+            YOLO26 (FP32)         & ---                        & ---                           & ---                 \\
+            YOLO26 (INT8)         & ---                        & ---                           & ---                 \\
             \bottomrule
           \end{tabular}
-          \caption{YOLOv12 detection accuracy: FP32 baseline vs.\ INT8 quantized.}
+          \caption{YOLO26 detection accuracy: FP32 baseline vs.\ INT8 quantized.}
         \end{table}
-        \heading{Image Generation: LCM\_Dreamshaper\_v7 (Stable Diffusion)}
+        \heading{Image Generation: LCM Dreamshaper v7 Hybrid Quantization}
 
-        Mixed-precision pipeline: INT8 quantization for U-Net via \textbf{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}~\cite{examples_et}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model.
+        INT8 quantization for U-Net via \textbf{quantize\_pt2e} and INT8 weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}~\cite{examples_et}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model. The compressed model achives X speed up in comparison with the original FP16 model.
 
         \begin{figure}
           \centering
@@ -243,11 +243,10 @@
             {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/old_man_int8.png}}        &
             {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/spaceman_int8.png}}         \\
           \end{tabular}
-          \caption{Stable Diffusion generation quality: FP32 (top) vs.\ INT8/compressed (bottom) for four prompts.}
+          \caption{LCM Dreamshaper v7 generation quality: FP32 (top) vs.\ INT8/compressed (bottom).}
         \end{figure}
 
       \end{block}
-
       \begin{block}{References}
 
         \nocite{*}
