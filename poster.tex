@@ -14,6 +14,7 @@
 \usecolortheme{gemini}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.14}
@@ -222,25 +223,27 @@
           \end{tabular}
           \caption{YOLOv12 detection accuracy: FP32 baseline vs.\ INT8 quantized.}
         \end{table}
-        \heading{Image Generation: Stable Diffusion}
+        \heading{Image Generation: LCM\_Dreamshaper\_v7 (Stable Diffusion)}
 
-        Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{examples_et}.
+        Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{examples_et}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model.
 
         \begin{figure}
           \centering
-          \begin{tabular}{ccc}
+          \begin{tabular}{m{2cm}m{0.2\colwidth}m{0.2\colwidth}m{0.2\colwidth}m{0.2\colwidth}}
             % Row 1 (FP32)
-            \includegraphics[width=0.12\colwidth]{example-image} &
-            \includegraphics[width=0.12\colwidth]{example-image} &
-            \includegraphics[width=0.12\colwidth]{example-image}   \\
+            {\centering\small\textbf{FP32}\par}                                                 &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/amazon_fp32.png}}         &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/autmn_in_paris_fp32.png}} &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/old_man_fp32.png}}        &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/spaceman_fp32.png}}         \\
             % Row 2 (INT8 / Compressed)
-            \includegraphics[width=0.12\colwidth]{example-image} &
-            \includegraphics[width=0.12\colwidth]{example-image} &
-            \includegraphics[width=0.12\colwidth]{example-image}   \\
+            {\centering\small\textbf{INT8}\par}                                                 &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/amazon_int8.png}}         &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/autmn_in_paris_int8.png}} &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/old_man_int8.png}}        &
+            {\includegraphics[width=0.2\colwidth]{figures/lcm_figures/spaceman_int8.png}}         \\
           \end{tabular}
-          % Replace 'example-image' with actual image paths, e.g.:
-          % figures/sd_prompt1_fp32.png, figures/sd_prompt1_int8.png, etc.
-          \caption{Stable Diffusion generation quality: FP32 (top) vs.\ INT8/compressed (bottom) for three prompts.}
+          \caption{Stable Diffusion generation quality: FP32 (top) vs.\ INT8/compressed (bottom) for four prompts.}
         \end{figure}
 
       \end{block}
