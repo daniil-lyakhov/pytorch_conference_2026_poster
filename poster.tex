@@ -136,6 +136,8 @@
         Applies weight compression to a \texttt{torch.fx.GraphModule}, targeting LLM deployment. Key algorithms:
 
         \begin{itemize}
+          \item \textbf{Mixed Precision}  --- Assigns different bit-widths (e.g.\ INT4/INT8) to individual layers based on their sensitivity.
+                The data-free \texttt{Weight Quantization Error} and 4 activation-aware metrics (\texttt{Hessian}, \texttt{Mean/Max Variance}, and \texttt{Mean Magnitude}) are available.
           \item \textbf{Scale Estimation}  --- Estimates scale to minimize the layer-wise output error for INT4 weight layers, iteratively refining the scales on a calibration subset.
 
                 \begin{figure}
@@ -150,8 +152,6 @@
                 %        \includegraphics[width=0.95\colwidth]{figures/AWQ_scheme.png}
                 %        \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant.}
                 %      \end{figure}
-          \item \textbf{GPTQ}  --- Applies the GPTQ algorithm for accurate layer-wise weight quantization using second-order information~\cite{gptq}.
-          \item \textbf{LoRA Correction}  --- Applies Low-Rank Adaptation corrections to compensate for weight compression errors~\cite{lora}.
         \end{itemize}
 
         Currently, \texttt{compress\_pt2e} supports the \texttt{OpenVINOQuantizer} and the OpenVINO backend. Support for third-party quantizers can be added by implementing a lightweight NNCF quantizer adapter.
