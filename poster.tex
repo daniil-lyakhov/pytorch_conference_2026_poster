@@ -99,24 +99,24 @@
       \begin{block}{Abstract}
 
         We present a \textbf{Model Compression API} for ExecuTorch, powered by the \textbf{Neural Network Compression Framework (NNCF)}.
-        It extends the standard \texttt{torch.ao} quantization pipeline with data-aware algorithms --- \texttt{quantize\_pt2e} for post-training quantization and \texttt{compress\_pt2e} for weight compression.
+        It extends the standard \textbf{torch.ao} quantization pipeline with data-aware algorithms --- \textbf{quantize\_pt2e} for post-training quantization and \textbf{compress\_pt2e} for weight compression.
         \par
 
         We demonstrate that the model compression with the \textbf{NNCF API} yields significant speedups on Llama~3.2, YOLO26, and Stable Diffusion while preserving target metrics --- for the \textbf{OpenVINO ExecuTorch backend}.
         \par
 
-        The NNCF compression API operates on the quantization annotations provided by a given \texttt{torch.ao} Quantizer --- rather than on backend-specific internals --- so any vendor backend can leverage its data-aware algorithms without altering the compressed model architecture.
+        The NNCF compression API operates on the quantization annotations provided by a given \textbf{torch.ao} Quantizer --- rather than on backend-specific internals --- so any vendor backend can leverage its data-aware algorithms without altering the compressed model architecture.
 
       \end{block}
 
       \begin{block}{NNCF Compression API}
 
-        NNCF's \texttt{quantize\_pt2e} and \texttt{compress\_pt2e} extend the standart torch.ao quantization pipeline with data-aware algorithms while preserving compatibility with the \texttt{torch.ao} Quantizer.
+        NNCF's \textbf{quantize\_pt2e} and \textbf{compress\_pt2e} extend the standart torch.ao quantization pipeline with data-aware algorithms while preserving compatibility with the \textbf{torch.ao} Quantizer.
 
         \begin{figure}
           \centering
           \includesvg[width=0.9\colwidth]{figures/quantization_flow}
-          \caption{NNCF \texttt{quantize\_pt2e} / \texttt{compress\_pt2e}.}
+          \caption{NNCF \textbf{quantize\_pt2e} / \textbf{compress\_pt2e}.}
         \end{figure}
       \end{block}
 
@@ -129,15 +129,15 @@
 
     \begin{column}{\colwidth}
 
-      \begin{block}{Weight Compression --- \texttt{compress\_pt2e}}
+      \begin{block}{Weight Compression --- \textbf{compress\_pt2e}}
 
         \heading{}
 
-        Applies weight compression to a \texttt{torch.fx.GraphModule}, targeting LLM deployment. Key algorithms:
+        Applies weight compression to a \textbf{torch.fx.GraphModule}, targeting LLM deployment. Key algorithms:
 
         \begin{itemize}
           \item \textbf{Mixed Precision}  --- Assigns different bit-widths (e.g.\ INT4/INT8) to individual layers based on their sensitivity.
-                The data-free \texttt{Weight Quantization Error} and 4 activation-aware metrics (\texttt{Hessian}, \texttt{Mean/Max Variance}, and \texttt{Mean Magnitude}) are available.
+                The data-free \textbf{Weight Quantization Error} and four activation-aware metrics (\textbf{Hessian}, \textbf{Mean/Max Variance}, and \textbf{Mean Magnitude}) are available.
           \item \textbf{Scale Estimation}  --- Estimates scale to minimize the layer-wise output error for INT4 weight layers, iteratively refining the scales on a calibration subset.
 
                 \begin{figure}
@@ -154,12 +154,12 @@
                 %      \end{figure}
         \end{itemize}
 
-        Currently, \texttt{compress\_pt2e} supports the \texttt{OpenVINOQuantizer} and the OpenVINO backend. Support for third-party quantizers can be added by implementing a lightweight NNCF quantizer adapter.
+        Currently, \textbf{compress\_pt2e} supports the \textbf{OpenVINOQuantizer} and the OpenVINO backend. Support for third-party quantizers can be added by implementing a lightweight NNCF quantizer adapter.
 
       \end{block}
-      \begin{block}{Post-Training Quantization --- \texttt{quantize\_pt2e}}
+      \begin{block}{Post-Training Quantization --- \textbf{quantize\_pt2e}}
 
-        Can be applied on top of \emph{any} \texttt{torch.ao} Quantizer to improve the accuracy of the quantized models. The API implements the standard \texttt{prepare\_pt2e}/\texttt{convert\_pt2e} flow and augments it with data-aware algorithms:
+        Can be applied on top of \emph{any} \textbf{torch.ao} Quantizer to improve the accuracy of the quantized models. The API implements the standard \textbf{prepare\_pt2e}/\textbf{convert\_pt2e} flow and augments it with data-aware algorithms:
 
         \begin{enumerate}
           \item \textbf{SmoothQuant} --- Reduces activation quantization error by inserting smoothing scales before weighted layers~\cite{smoothquant}.
@@ -174,7 +174,7 @@
 
 
 
-        This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \texttt{torch.ao} quantization call with \texttt{quantize\_pt2e} and supply a calibration dataset.
+        This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \textbf{torch.ao} quantization call with \textbf{quantize\_pt2e} and supply a calibration dataset.
 
       \end{block}
 
@@ -209,7 +209,7 @@
 
         \heading{Detection: YOLOv12 INT8 Post Training Quantization}
 
-        INT8 post-training quantization applied via \texttt{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{examples_et}.
+        INT8 post-training quantization applied via \textbf{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{examples_et}.
 
         \begin{table}
           \centering
@@ -225,7 +225,7 @@
         \end{table}
         \heading{Image Generation: LCM\_Dreamshaper\_v7 (Stable Diffusion)}
 
-        Mixed-precision pipeline: INT8 quantization for U-Net via \texttt{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \texttt{compress\_pt2e}~\cite{examples_et}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model.
+        Mixed-precision pipeline: INT8 quantization for U-Net via \textbf{quantize\_pt2e}, weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}~\cite{examples_et}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model.
 
         \begin{figure}
           \centering
