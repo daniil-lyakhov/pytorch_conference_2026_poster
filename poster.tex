@@ -213,15 +213,16 @@
 
         \begin{table}
           \centering
-          \begin{tabular}{l r r r}
+          \begin{tabular}{l r r r r}
             \toprule
-            \textbf{Model / Mode} & \textbf{mAP@50 $\uparrow$} & \textbf{mAP@50:95 $\uparrow$} & \textbf{Model Size} \\
+            \textbf{Model} & \textbf{mAP@50 FP32 $\uparrow$} & \textbf{mAP@50 INT8 $\uparrow$} & \textbf{Size Compression} & \textbf{Speed Up} \\
             \midrule
-            YOLO26 (FP32)         & ---                        & ---                           & ---                 \\
-            YOLO26 (INT8)         & ---                        & ---                           & ---                 \\
+            YOLO26n        & 0.638                           & 0.639                           & 2.41$\times$              & 2.50$\times$      \\
+            YOLO26m        & 0.784                           & 0.780                           & 3.04$\times$              & 2.84$\times$      \\
+            YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 2.92$\times$      \\
             \bottomrule
           \end{tabular}
-          \caption{YOLO26 detection accuracy: FP32 baseline vs.\ INT8 quantized.}
+          \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized.}
         \end{table}
         \heading{Image Generation: LCM Dreamshaper v7 Hybrid Quantization}
 
