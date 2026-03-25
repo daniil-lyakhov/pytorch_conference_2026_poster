@@ -136,9 +136,12 @@
 
         \begin{figure}
           \centering
-          \includesvg[width=0.5\colwidth]{figures/quantization_flow}
+          \includesvg[width=0.65\colwidth]{figures/quantization_flow}
           \caption{NNCF \textbf{quantize\_pt2e} / \textbf{compress\_pt2e}.}
         \end{figure}
+
+        Unlike the standard \textbf{torch.ao} flow, NNCF embeds a \textbf{calibration loop} inside the quantization pipeline, enabling data-aware algorithms to be applied \textbf{sequentially} --- each algorithm refines the model using calibration data before the next one runs, resulting in higher accuracy of the compressed model.
+
       \end{block}
 
 
@@ -175,28 +178,46 @@
                 %      \end{figure}
         \end{itemize}
 
-        Currently, \textbf{compress\_pt2e} supports the \textbf{OpenVINOQuantizer} and the OpenVINO backend. Support for third-party quantizers can be added by implementing a lightweight NNCF quantizer adapter.
+        %Currently, \textbf{compress\_pt2e} supports the \textbf{OpenVINOQuantizer} and the OpenVINO backend. Support for third-party quantizers can be added by implementing a lightweight NNCF quantizer adapter.
 
       \end{block}
       \begin{block}{Post-Training Quantization --- \textbf{quantize\_pt2e}}
 
-        Can be applied on top of \emph{any} \textbf{torch.ao} Quantizer to improve the accuracy of the quantized models. The API implements the standard \textbf{prepare\_pt2e}/\textbf{convert\_pt2e} flow and augments it with data-aware algorithms:
+        Can be applied on top of \emph{any} \textbf{torch.ao} Quantizer to improve the accuracy of the quantized models. Key algorithms:
 
         \begin{enumerate}
           \item \textbf{SmoothQuant} --- Reduces activation quantization error by inserting smoothing scales before weighted layers~\cite{smoothquant}.
 
                 \begin{figure}
                   \centering
-                  \includegraphics[width=0.95\colwidth]{svg-inkscape/sq_scheme.png}
+                  \includegraphics[width=0.8\colwidth]{svg-inkscape/sq_scheme.png}
                   \caption{Magnitude of the input activations and weights of a linear layer in OPT-13B before and after SmoothQuant. Figure source\cite{smoothquant}.}
                 \end{figure}
-          \item \textbf{BiasCorrection} --- Corrects bias shifts introduced by quantization~\cite{bias_correction}.
+          \item \textbf{BiasCorrection} --- Compares quantized and original layer outputs layer-by-layer and adjusts convolution biases to align them, compensating for the error introduced by quantization~\cite{bias_correction}.
         \end{enumerate}
 
 
+        % This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \textbf{torch.ao} quantization call with \textbf{quantize\_pt2e} and supply a calibration dataset.
 
-        This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \textbf{torch.ao} quantization call with \textbf{quantize\_pt2e} and supply a calibration dataset.
+      \end{block}
+      \begin{block}{Results}
+        \heading{Detection: YOLO26 INT8 Post Training Quantization}
 
+        INT8 post-training quantization applied via \textbf{quantize\_pt2e} with SmoothQuant and BiasCorrection.
+
+        \begin{table}
+          \centering
+          \begin{tabular}{l r r r r}
+            \toprule
+            \textbf{Model} & \textbf{mAP@50 FP32 $\uparrow$} & \textbf{mAP@50 INT8 $\uparrow$} & \textbf{Size Compression} & \textbf{Speed Up} \\
+            \midrule
+            YOLO26n        & 0.638                           & 0.639                           & 2.41$\times$              & 2.50$\times$      \\
+            YOLO26m        & 0.784                           & 0.780                           & 3.04$\times$              & 2.84$\times$      \\
+            YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 2.92$\times$      \\
+            \bottomrule
+          \end{tabular}
+          \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized.}
+        \end{table}
       \end{block}
 
     \end{column}
@@ -209,9 +230,10 @@
 
         \heading{LLM: Llama~3.2 Weight Compression}
 
+        INT4 mixed-precision weight compression via \textbf{compress\_pt2e} with \textbf{Mean Magnitude} sensitivity metric for mixed-precision assignment. Perplexity evaluated on \textbf{WikiText-2}.
+
         \begin{table}
           \centering
-          \small
           \begin{tabular}{>{\raggedright}p{3.2cm} c c c >{\centering\arraybackslash}p{4cm} r r}
             \toprule
             \textbf{Precision} & \textbf{Group} & \textbf{Ratio} & \textbf{Backup} & \textbf{AWQ + Scale Est.} & \textbf{PPL $\downarrow$} & \textbf{Size Compression} \\
@@ -233,27 +255,9 @@
         \end{table}
 
 
-        \heading{Detection: YOLO26 INT8 Post Training Quantization}
-
-        INT8 post-training quantization applied via \textbf{quantize\_pt2e} with SmoothQuant and BiasCorrection.
-
-        \begin{table}
-          \centering
-          \small
-          \begin{tabular}{l r r r r}
-            \toprule
-            \textbf{Model} & \textbf{mAP@50 FP32 $\uparrow$} & \textbf{mAP@50 INT8 $\uparrow$} & \textbf{Size Compression} & \textbf{Speed Up} \\
-            \midrule
-            YOLO26n        & 0.638                           & 0.639                           & 2.41$\times$              & 2.50$\times$      \\
-            YOLO26m        & 0.784                           & 0.780                           & 3.04$\times$              & 2.84$\times$      \\
-            YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 2.92$\times$      \\
-            \bottomrule
-          \end{tabular}
-          \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized.}
-        \end{table}
         \heading{Image Generation: LCM Dreamshaper v7 Hybrid Quantization}
 
-        INT8 quantization for U-Net via \textbf{quantize\_pt2e} and INT8 weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}~\cite{examples_et}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model. The compressed model achives \textbf{??.??} X speed up in comparison with the original FP16 model.
+        INT8 quantization for U-Net via \textbf{quantize\_pt2e} and INT8 weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model. The compressed model achives \textbf{??.??} X speed up in comparison with the original FP16 model.
 
         \begin{figure}
           \centering
