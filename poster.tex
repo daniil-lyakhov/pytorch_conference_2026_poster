@@ -20,6 +20,7 @@
 \pgfplotsset{compat=1.14}
 \usepackage{anyfontsize}
 \usepackage[inkscapelatex=false]{svg}
+\usepackage{wrapfig}
 
 % ====================
 % Lengths
@@ -98,7 +99,23 @@
 
       \begin{block}{Abstract}
 
-        We present a \textbf{Model Compression API} for ExecuTorch, powered by the \textbf{Neural Network Compression Framework (NNCF)}.
+        \begin{wrapfigure}{r}{0.38\colwidth}
+          \vspace{-1ex}
+          \begin{minipage}{0.17\colwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/nncf_qr.png}
+            \small NNCF
+          \end{minipage}%
+          \hfill
+          \begin{minipage}{0.17\colwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/openvino_et_qr.png}
+            \small OpenVINO
+          \end{minipage}
+          \vspace{-2ex}
+        \end{wrapfigure}
+
+        We present a \textbf{Model Compression API} for ExecuTorch\cite{a_executorch}, powered by the \textbf{Neural Network Compression Framework (NNCF)}.
         It extends the standard \textbf{torch.ao} quantization pipeline with data-aware algorithms --- \textbf{quantize\_pt2e} for post-training quantization and \textbf{compress\_pt2e} for weight compression.
         \par
 
@@ -115,7 +132,7 @@
 
         \begin{figure}
           \centering
-          \includesvg[width=0.9\colwidth]{figures/quantization_flow}
+          \includesvg[width=0.5\colwidth]{figures/quantization_flow}
           \caption{NNCF \textbf{quantize\_pt2e} / \textbf{compress\_pt2e}.}
         \end{figure}
       \end{block}
@@ -190,6 +207,7 @@
 
         \begin{table}
           \centering
+          \small
           \begin{tabular}{>{\raggedright}p{3.2cm} c c c >{\centering\arraybackslash}p{4cm} r r}
             \toprule
             \textbf{Precision} & \textbf{Group} & \textbf{Ratio} & \textbf{Backup} & \textbf{AWQ + Scale Est.} & \textbf{PPL $\downarrow$} & \textbf{Size Compression} \\
@@ -213,10 +231,11 @@
 
         \heading{Detection: YOLO26 INT8 Post Training Quantization}
 
-        INT8 post-training quantization applied via \textbf{quantize\_pt2e} with SmoothQuant and BiasCorrection~\cite{examples_et}.
+        INT8 post-training quantization applied via \textbf{quantize\_pt2e} with SmoothQuant and BiasCorrection.
 
         \begin{table}
           \centering
+          \small
           \begin{tabular}{l r r r r}
             \toprule
             \textbf{Model} & \textbf{mAP@50 FP32 $\uparrow$} & \textbf{mAP@50 INT8 $\uparrow$} & \textbf{Size Compression} & \textbf{Speed Up} \\
