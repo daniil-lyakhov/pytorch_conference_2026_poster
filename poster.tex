@@ -22,6 +22,9 @@
 \usepackage[inkscapelatex=false]{svg}
 \usepackage{wrapfig}
 
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+
 % ====================
 % Lengths
 % ====================
@@ -92,6 +95,7 @@
 \begin{document}
 
 \begin{frame}[t]
+  \vspace{-1ex}
   \begin{columns}[t]
     \separatorcolumn
 
@@ -99,15 +103,15 @@
 
       \begin{block}{Abstract}
 
-        \begin{wrapfigure}{r}{0.38\colwidth}
+        \begin{wrapfigure}{r}{0.47\colwidth}
           \vspace{-1ex}
-          \begin{minipage}{0.17\colwidth}
+          \begin{minipage}{0.23\colwidth}
             \centering
             \includegraphics[width=\linewidth]{figures/nncf_qr.png}
             \small NNCF
           \end{minipage}%
           \hfill
-          \begin{minipage}{0.17\colwidth}
+          \begin{minipage}{0.23\colwidth}
             \centering
             \includegraphics[width=\linewidth]{figures/openvino_et_qr.png}
             \small OpenVINO
@@ -115,7 +119,7 @@
           \vspace{-2ex}
         \end{wrapfigure}
 
-        We present a \textbf{Model Compression API} for ExecuTorch\cite{a_executorch}, powered by the \textbf{Neural Network Compression Framework (NNCF)}.
+        We present a \textbf{Model Compression API} for ExecuTorch\cite{a_executorch}, powered by the \textbf{Neural Network Compression Framework (NNCF)\cite{a_nncf}}.
         It extends the standard \textbf{torch.ao} quantization pipeline with data-aware algorithms --- \textbf{quantize\_pt2e} for post-training quantization and \textbf{compress\_pt2e} for weight compression.
         \par
 
