@@ -211,9 +211,9 @@
             \toprule
             \textbf{Model} & \textbf{mAP@50 FP32 $\uparrow$} & \textbf{mAP@50 INT8 $\uparrow$} & \textbf{Size Compression} & \textbf{Speed Up} \\
             \midrule
-            YOLO26n        & 0.638                           & 0.639                           & 2.41$\times$              & 2.50$\times$      \\
-            YOLO26m        & 0.784                           & 0.780                           & 3.04$\times$              & 2.84$\times$      \\
-            YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 2.92$\times$      \\
+            YOLO26n        & 0.638                           & 0.639                           & 2.41$\times$              & 2.49$\times$      \\
+            YOLO26m        & 0.784                           & 0.780                           & 3.04$\times$              & 2.91$\times$      \\
+            YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 3.08$\times$      \\
             \bottomrule
           \end{tabular}
           \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized.}
@@ -286,10 +286,38 @@
 
       \end{block}
 
+      \begin{block}{\footnotesize Performance Evaluation Platform}
+        \scriptsize
+        \textbf{(``Panther Lake'') Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H Processor Configuration:}
+        Laptop Model: Intel Corporation Panther Lake Client Platform 0.1 (Reference Design),
+        CPU: Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H processor,
+        Memory: 62\,GB SODIMM-6400\,MHz,
+        Storage: 465.8\,GB (Sabrent SB-RKT4P-500),
+        OS: Ubuntu 24.04.4 LTS,
+        OS Version: Kernel 6.17.0-061700-generic,
+        Graphics: Intel Corporation Device b0a0 (xe driver),
+        Graphics Driver Version: xe (built-in),
+        Resolution: --,
+        NPU Driver Version: intel\_vpu 1.0.0,
+        PC BIOS: PTLPFWI1.R00.3344.D58.2510021003 (10/02/2025),
+        Screen Size: --,
+        Power Plan: performance,
+        Power Mode: performance,
+        Power App Setting (OEM's Power App): --,
+        VBS (Secure Boot): OFF,
+        AppArmor: Running,
+        Long Duration Package Power Limit (W): 200,
+        Short Duration Power Limit (W): 64.
+        Key Software Version: OpenVINO 2026.1.0.dev20260312
+        \textbf{Notice \& Disclamers}: Performance varies by use, configuration and other factors. Learn more on the Performance Index site. Performance results are based on testing as of dates shown in configurations and may not reflect all publicly available updates.  See backup for configuration details.  No product or component can be absolutely secure. Your costs and results may vary. Intel technologies may require enabled hardware, software or service activation.
+        Intel Corporation. Intel, the Intel logo, and other Intel marks are trademarks of Intel Corporation or its subsidiaries. Other names and brands may be claimed as the property of others.
+      \end{block}
+
     \end{column}
 
     \separatorcolumn
   \end{columns}
+
 \end{frame}
 
 \end{document}
