@@ -216,7 +216,7 @@
             YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 3.08$\times$      \\
             \bottomrule
           \end{tabular}
-          \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized.}
+          \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized. Device: Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H.}
         \end{table}
       \end{block}
 
@@ -257,7 +257,7 @@
 
         \heading{Image Generation: LCM Dreamshaper v7 Hybrid Quantization}
 
-        INT8 quantization for U-Net via \textbf{quantize\_pt2e} and INT8 weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model. The compressed model achives \textbf{??.??} X speed up in comparison with the original FP16 model.
+        INT8 quantization for U-Net via \textbf{quantize\_pt2e} and INT8 weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}. CLIP Score$\uparrow$ remains close to the FP32 baseline of 35.74, with 34.75 for INT8 compressed model. The compressed model achives \textbf{1.54}X speed up in comparison with the original FP16 model on  Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H.
 
         \begin{figure}
           \centering
