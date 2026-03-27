@@ -159,7 +159,7 @@
         Applies weight compression to a \textbf{torch.fx.GraphModule}, targeting LLM deployment. Key algorithms:
 
         \begin{itemize}
-          \item \textbf{Data-Free Compression}  --- Performs weight compression without any calibration data, relying solely on the pretrained weights.
+          \item \textbf{Data-Free Compression}  --- Performs weight compression without any calibration data, relying solely on the pretrained weights. Can be used together with the \textbf{AWQ} and \textbf{Mixed Precision} algorithms.
           \item \textbf{Mixed Precision}  --- Assigns different bit-widths (e.g.\ INT4/INT8) to individual layers based on their sensitivity.
                 The data-free \textbf{Weight Quantization Error} and four activation-aware metrics (\textbf{Hessian}, \textbf{Mean/Max Variance}, and \textbf{Mean Magnitude}) are available.
           \item \textbf{Scale Estimation}  --- Estimates scale to minimize the layer-wise output error for INT4 weight layers, iteratively refining the scales on a calibration subset.
