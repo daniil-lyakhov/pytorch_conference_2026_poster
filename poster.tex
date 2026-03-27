@@ -132,7 +132,7 @@
 
       \begin{block}{NNCF Compression API}
 
-        NNCF's \textbf{quantize\_pt2e} and \textbf{compress\_pt2e} extend the standart torch.ao quantization pipeline with data-aware algorithms while preserving compatibility with the \textbf{torch.ao} Quantizer.
+        NNCF's \textbf{quantize\_pt2e} and \textbf{compress\_pt2e} extend the standard torch.ao quantization pipeline with data-aware algorithms while preserving compatibility with the \textbf{torch.ao} Quantizer.
 
         \begin{figure}
           \centering
@@ -166,7 +166,7 @@
                 \begin{figure}
                   \centering
                   \includesvg[width=.9\colwidth]{figures/scale_estimation}
-                  \caption{Scale Estimation finds per-group scale factors that minimize the error of compressed layer outputs by grid searching a list of scale mutations normalazed by the layer inputs.}
+                  \caption{Scale Estimation finds per-group scale factors that minimize the error of compressed layer outputs by grid searching a list of scale mutations normalized by the layer inputs.}
                 \end{figure}
           \item \textbf{AWQ}  --- Activation-aware Weight Quantization that finds per-channel scales to minimize quantization error based on activation distributions~\cite{awq}.
                 %      \begin{figure}
@@ -303,7 +303,7 @@
         Long Duration Package Power Limit (W): 200,
         Short Duration Power Limit (W): 64.
         Key Software Version: OpenVINO 2026.1.0.dev20260312
-        \textbf{Notice \& Disclamers}: Performance varies by use, configuration and other factors. Learn more on the Performance Index site. Performance results are based on testing as of dates shown in configurations and may not reflect all publicly available updates.  See backup for configuration details.  No product or component can be absolutely secure. Your costs and results may vary. Intel technologies may require enabled hardware, software or service activation.
+        \textbf{Notice \& Disclaimers}: Performance varies by use, configuration and other factors. Learn more on the Performance Index site. Performance results are based on testing as of dates shown in configurations and may not reflect all publicly available updates.  See backup for configuration details.  No product or component can be absolutely secure. Your costs and results may vary. Intel technologies may require enabled hardware, software or service activation.
         Intel Corporation. Intel, the Intel logo, and other Intel marks are trademarks of Intel Corporation or its subsidiaries. Other names and brands may be claimed as the property of others.
       \end{block}
 
