@@ -119,7 +119,7 @@
           \vspace{-2ex}
         \end{wrapfigure}
 
-        We present a \textbf{Model Compression API} for ExecuTorch\cite{a_executorch}, powered by the \textbf{Neural Network Compression Framework (NNCF)\cite{a_nncf}}.
+        We present a \textbf{Model Compression API} for ExecuTorch, powered by the \textbf{Neural Network Compression Framework (NNCF)}.
         It extends the standard \textbf{torch.ao} quantization pipeline with data-aware algorithms --- \textbf{quantize\_pt2e} for post-training quantization and \textbf{compress\_pt2e} for weight compression.
         \par
 
@@ -140,11 +140,10 @@
           \caption{NNCF Compression API scheme: \textbf{quantize\_pt2e} / \textbf{compress\_pt2e}.}
         \end{figure}
 
-        Unlike the standard \textbf{torch.ao} flow, NNCF embeds a \textbf{calibration loop} inside the quantization pipeline, enabling data-aware algorithms to be applied \textbf{sequentially} --- each algorithm refines the model using calibration data before the next one runs, resulting in higher accuracy of the compressed model.
+        Unlike the standard \textbf{torch.ao} flow, NNCF embeds a \textbf{calibration loop} inside the quantization pipeline, enabling data-aware algorithms to be applied \textbf{sequentially} --- each algorithm refines the model using calibration data before the next one runs.
+        A \textbf{data-free} mode is also supported: when no calibration dataset is provided, \textbf{compress\_pt2e} applies weight-only compression with Mixed Precision and AWQ algorithms.
 
       \end{block}
-
-
 
 
     \end{column}
@@ -160,16 +159,15 @@
         Applies weight compression to a \textbf{torch.fx.GraphModule}, targeting LLM deployment. Key algorithms:
 
         \begin{itemize}
+          \item \textbf{Data-Free Compression}  --- Performs weight compression without any calibration data, relying solely on the pretrained weights.
           \item \textbf{Mixed Precision}  --- Assigns different bit-widths (e.g.\ INT4/INT8) to individual layers based on their sensitivity.
                 The data-free \textbf{Weight Quantization Error} and four activation-aware metrics (\textbf{Hessian}, \textbf{Mean/Max Variance}, and \textbf{Mean Magnitude}) are available.
           \item \textbf{Scale Estimation}  --- Estimates scale to minimize the layer-wise output error for INT4 weight layers, iteratively refining the scales on a calibration subset.
-
                 \begin{figure}
                   \centering
-                  \includesvg[width=1.\colwidth]{figures/scale_estimation}
+                  \includesvg[width=.9\colwidth]{figures/scale_estimation}
                   \caption{Scale Estimation finds per-group scale factors that minimize the error of compressed layer outputs by grid searching a list of scale mutations normalazed by the layer inputs.}
                 \end{figure}
-
           \item \textbf{AWQ}  --- Activation-aware Weight Quantization that finds per-channel scales to minimize quantization error based on activation distributions~\cite{awq}.
                 %      \begin{figure}
                 %        \centering
@@ -200,26 +198,13 @@
         % This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \textbf{torch.ao} quantization call with \textbf{quantize\_pt2e} and supply a calibration dataset.
 
       \end{block}
-      \begin{block}{Results}
-        \heading{Detection: YOLO26 INT8 Post Training Quantization}
 
-        INT8 post-training quantization applied via \textbf{quantize\_pt2e} with SmoothQuant and BiasCorrection.
+      \begin{block}{References}
 
-        \begin{table}
-          \centering
-          \begin{tabular}{l r r r r}
-            \toprule
-            \textbf{Model} & \textbf{mAP@50 FP32 $\uparrow$} & \textbf{mAP@50 INT8 $\uparrow$} & \textbf{Size Compression} & \textbf{INT8 Speed Up} \\
-            \midrule
-            YOLO26n        & 0.638                           & 0.639                           & 2.41$\times$              & 2.49$\times$           \\
-            YOLO26m        & 0.784                           & 0.780                           & 3.04$\times$              & 2.91$\times$           \\
-            YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 3.08$\times$           \\
-            \bottomrule
-          \end{tabular}
-          \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized. Device: Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H.}
-        \end{table}
+        \nocite{*}
+        \footnotesize{\bibliographystyle{plain}\bibliography{poster}}
+
       \end{block}
-
     \end{column}
 
     \separatorcolumn
@@ -228,7 +213,7 @@
 
       \begin{block}{Results}
 
-        \heading{LLM: Llama~3.2 Weight Compression}
+        \heading{Llama~3.2 Weight Compression via \textbf{compress\_pt2e}}
 
         INT4 mixed-precision weight compression via \textbf{compress\_pt2e} with \textbf{Mean Magnitude} sensitivity metric for mixed-precision assignment. Perplexity evaluated on \textbf{WikiText-2}.
         \textbf{Ratio} denotes the fraction of layers compressed to INT4, other layers are using \textbf{Backup} precision.
@@ -254,10 +239,25 @@
           \caption{Llama~3.2 WikiText-2 perplexity under INT4 mixed-precision weight compression.}
         \end{table}
 
+        \heading{YOLO26 INT8 Post Training Quantization via \textbf{quantize\_pt2e}}
 
-        \heading{Image Generation: LCM Dreamshaper v7 Hybrid Quantization}
+        \begin{table}
+          \centering
+          \begin{tabular}{l r r r r}
+            \toprule
+            \textbf{Model} & \textbf{mAP@50 FP32 $\uparrow$} & \textbf{mAP@50 INT8 $\uparrow$} & \textbf{Size Compression} & \textbf{INT8 Speed Up} \\
+            \midrule
+            YOLO26n        & 0.638                           & 0.639                           & 2.41$\times$              & 2.49$\times$           \\
+            YOLO26m        & 0.784                           & 0.780                           & 3.04$\times$              & 2.91$\times$           \\
+            YOLO26L        & 0.786                           & 0.778                           & 3.10$\times$              & 3.08$\times$           \\
+            \bottomrule
+          \end{tabular}
+          \caption{YOLO26 detection accuracy and efficiency: FP32 baseline vs.\ INT8 quantized. Device: Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H.}
+        \end{table}
 
-        INT8 quantization for U-Net via \textbf{quantize\_pt2e} and INT8 weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}. CLIP Score$\uparrow$: 35.74 (FP32) vs.\ 34.75 (INT8). Speed up: \textbf{1.54}$\times$ over FP16 baseline on Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H.
+        \heading{LCM Dreamshaper v7 Quantization}
+
+        INT8 quantization for U-Net via \textbf{quantize\_pt2e} and INT8 weight compression for text encoder and VAE decoder via \textbf{compress\_pt2e}. CLIP Score$\uparrow$: 35.74 (FP32) vs.\ 34.75 (INT8). Speed up: \textbf{1.54}$\times$ over FP32 baseline on Intel\textsuperscript{\textregistered} Core\texttrademark\ Ultra~7 356H.
 
         \begin{figure}
           \centering
@@ -277,12 +277,6 @@
           \end{tabular}
           \caption{LCM Dreamshaper v7 generation quality: FP32 (top) vs.\ INT8/compressed (bottom).}
         \end{figure}
-
-      \end{block}
-      \begin{block}{References}
-
-        \nocite{*}
-        \footnotesize{\bibliographystyle{plain}\bibliography{poster}}
 
       \end{block}
 

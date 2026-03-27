@@ -23,14 +23,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="1.4142136"
-     inkscape:cx="560.73568"
+     inkscape:cx="561.44277"
      inkscape:cy="171.47339"
      inkscape:window-width="2560"
      inkscape:window-height="1351"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g49" />
+     inkscape:current-layer="g51" />
   <defs
      id="defs9">
     <rect
@@ -395,7 +395,7 @@
            sodipodi:role="line"
            id="tspan57"
            x="709.51123"
-           y="145.4563">S = mutate(S) * norm(X)</tspan></text>
+           y="145.4563">S = update(S) * norm(X)</tspan></text>
     </g>
     <g
        id="g50"
@@ -524,7 +524,7 @@
        y="136.85721"
        id="text56"><tspan
          sodipodi:role="line"
-         id="tspan56"></tspan></text>
+         id="tspan56" /></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14px;line-height:1.2;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:rtl;fill:#e75b0f;stroke:#e75b0f;stroke-width:2"
@@ -532,7 +532,7 @@
        y="265.01074"
        id="text61"><tspan
          sodipodi:role="line"
-         id="tspan61"></tspan></text>
+         id="tspan61" /></text>
   </g>
   <!-- Arrow to final output -->
   <!-- ===== Final: Apply ===== -->
