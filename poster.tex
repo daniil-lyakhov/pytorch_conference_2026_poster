@@ -224,16 +224,16 @@
             \textbf{Precision} & \textbf{Group size} & \textbf{Ratio} & \textbf{Backup} & \textbf{AWQ} & \textbf{Scale Est.} & \textbf{PPL $\downarrow$} & \textbf{Size Compr.} \\
             \midrule
             \multicolumn{8}{l}{\textit{Llama~3.2 3B}}                                                                                                                           \\
-            FP32               & --                  & 1              & --              & --           & --                  & 15.56                     & 1$\times$            \\
-            INT4 Asym          & 128                 & 1              & --              & \texttimes   & \texttimes          & ?                         & 5.99$\times$         \\
-            INT4 Asym          & 128                 & 0.8            & INT8 Asym       & \texttimes   & \texttimes          & 16.57                     & 5.33$\times$         \\
-            INT4 Asym          & 128                 & 0.8            & INT8 Asym       & \checkmark   & \checkmark          & \textbf{15.96}            & 5.33$\times$         \\
+            FP32               & --                  & 1              & --              & --           & --                  & 10.11                     & 1$\times$            \\
+            INT4 Sym           & 128                 & 1              & --              & \texttimes   & \texttimes          & 11.09                     & 5.25$\times$         \\
+            INT4 Sym           & 128                 & 0.8            & INT8 Asym       & \texttimes   & \texttimes          & 10.86                     & 4.80$\times$         \\
+            INT4 Sym           & 128                 & 0.8            & INT8 Asym       & \checkmark   & \checkmark          & \textbf{10.58}            & 4.78$\times$         \\
             \midrule
-            \multicolumn{8}{l}{\textit{Llama~3.2 8B}}                                                                                                                           \\
-            FP32               & --                  & 1              & --              & --           & --                  & ?                         & 1$\times$            \\
-            INT4 Asym          & 128                 & 1              & --              & \texttimes   & \texttimes          & ?                         & 5.99$\times$         \\
-            INT4 Asym          & 128                 & 0.8            & INT8 Asym       & \texttimes   & \texttimes          & 16.57                     & 5.33$\times$         \\
-            INT4 Asym          & 128                 & 0.8            & INT8 Asym       & \checkmark   & \checkmark          & \textbf{15.96}            & 5.33$\times$         \\
+            \multicolumn{8}{l}{\textit{Llama~3 8B}}                                                                                                                             \\
+            FP32               & --                  & 1              & --              & --           & --                  & 7.79                         & 1$\times$         \\
+            INT4 Asym          & 128                 & 1              & --              & \texttimes   & \texttimes          & 8.64                      & 6.05$\times$         \\
+            INT4 Asym          & 128                 & 0.8            & INT8 Asym       & \texttimes   & \texttimes          & --                        & 5.33$\times$         \\
+            INT4 Asym          & 128                 & 0.8            & INT8 Asym       & \checkmark   & \checkmark          & \textbf{8.23}             & 5.37$\times$         \\
             \bottomrule
           \end{tabular}
           \caption{Llama~3.2 WikiText-2 perplexity under INT4 mixed-precision weight compression.}
