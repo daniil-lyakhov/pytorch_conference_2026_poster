@@ -245,7 +245,7 @@
          text-anchor="middle"
          font-size="13px"
          fill="#333333"
-         id="text11">FP16 Weight Matrix</text>
+         id="text11">FP32 Weight Matrix</text>
     </g>
     <g
        id="g54">
