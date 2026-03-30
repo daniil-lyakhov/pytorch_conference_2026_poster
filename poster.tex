@@ -120,19 +120,19 @@
         \end{wrapfigure}
 
         We present a \textbf{Model Compression API} for ExecuTorch, powered by the \textbf{Neural Network Compression Framework (NNCF)}.
-        It extends the standard \textbf{torch.ao} quantization pipeline with data-aware algorithms --- \textbf{quantize\_pt2e} for post-training quantization and \textbf{compress\_pt2e} for weight compression.
+        It extends the standard \textbf{torchao} quantization pipeline with data-aware algorithms --- \textbf{quantize\_pt2e} for post-training quantization and \textbf{compress\_pt2e} for weight compression.
         \par
 
         We demonstrate that the model compression with the \textbf{NNCF API} yields significant speedups on Llama~3.2, YOLO26, and Stable Diffusion while preserving target metrics --- for the \textbf{OpenVINO ExecuTorch backend}.
         \par
 
-        The NNCF compression API operates on the quantization annotations provided by a given \textbf{torch.ao} Quantizer --- rather than on backend-specific internals --- so any vendor backend can leverage its data-aware algorithms without altering the compressed model architecture.
+        The NNCF compression API operates on the quantization annotations provided by a given \textbf{torchao} Quantizer --- rather than on backend-specific internals --- so any vendor backend can leverage its data-aware algorithms without altering the compressed model architecture.
 
       \end{block}
 
       \begin{block}{NNCF Compression API}
 
-        NNCF's \textbf{quantize\_pt2e} and \textbf{compress\_pt2e} extend the standard torch.ao quantization pipeline with data-aware algorithms while preserving compatibility with the \textbf{torch.ao} Quantizer.
+        NNCF's \textbf{quantize\_pt2e} and \textbf{compress\_pt2e} extend the standard torchao quantization pipeline with data-aware algorithms while preserving compatibility with the \textbf{torchao} Quantizer.
 
         \begin{figure}
           \centering
@@ -140,7 +140,7 @@
           \caption{NNCF Compression API scheme: \textbf{quantize\_pt2e} / \textbf{compress\_pt2e}.}
         \end{figure}
 
-        Unlike the standard \textbf{torch.ao} flow, NNCF embeds a \textbf{calibration loop} inside the quantization pipeline, enabling data-aware algorithms to be applied \textbf{sequentially} --- each algorithm refines the model using calibration data before the next one runs.
+        Unlike the standard \textbf{torchao} flow, NNCF embeds a \textbf{calibration loop} inside the quantization pipeline, enabling data-aware algorithms to be applied \textbf{sequentially} --- each algorithm refines the model using calibration data before the next one runs.
         A \textbf{data-free} mode is also supported: when no calibration dataset is provided, \textbf{compress\_pt2e} applies weight-only compression with Mixed Precision and AWQ algorithms.
 
       \end{block}
@@ -181,7 +181,7 @@
       \end{block}
       \begin{block}{Post-Training Quantization --- \textbf{quantize\_pt2e}}
 
-        Can be applied on top of \emph{any} \textbf{torch.ao} Quantizer to improve the accuracy of the quantized models. Key algorithms:
+        Can be applied on top of \emph{any} \textbf{torchao} Quantizer to improve the accuracy of the quantized models. Key algorithms:
 
         \begin{enumerate}
           \item \textbf{SmoothQuant} --- Reduces activation quantization error by inserting smoothing scales before weighted layers~\cite{smoothquant}.
@@ -195,7 +195,7 @@
         \end{enumerate}
 
 
-        % This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \textbf{torch.ao} quantization call with \textbf{quantize\_pt2e} and supply a calibration dataset.
+        % This means existing quantization pipelines can benefit from NNCF's accuracy-boosting algorithms without changing the quantizer --- simply replace the standard \textbf{torchao} quantization call with \textbf{quantize\_pt2e} and supply a calibration dataset.
 
       \end{block}
 
